@@ -55,7 +55,7 @@
                     <td class="d-none">{{ mi_visita.id_visita }}</td> 
                     <td>{{ mi_visita.parque | title }}</td>
                     <td>{{ mi_visita.rating }}</td>
-                    <td>{{ mi_visita.fecha_visita }}</td>
+                    <td>{{ mi_visita.fecha_visita.strftime('%d-%m-%Y') }}</td>
                     <td class="text-center">
                         <!-- Ver -->
                         <a href="{{ url_for('ver_visita', id=mi_visita.id_visita) }}" class="btn btn-info btn-sm me-2">Ver</a>
