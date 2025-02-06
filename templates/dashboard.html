@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartelera de Películas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+</head>
+<body class="bg-light">
+    <!-- Barra de navegación -->
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-6">
+                <h3>Bienvenido, {{ usuario.nombre | title }} {{ usuario.apellido | title }}</h3>
+            </div>
+            
+            <!-- Columna de la derecha (Botones) -->
+            <div class="col-6 d-flex justify-content-end align-items-center">
+                <a href="/nueva" class="btn btn-success me-2">Nueva Visita</a>
+                <a href="{{ url_for('cerrar_sesion') }}" class="btn btn-danger">Cerrar Sesión</a>
+            </div>
+        </div>
+    </div>    
+
+    <!-- Contenido principal -->
+    <div class="container mt-5">
+         <!-- Mensajes Flash -->
+         {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="mt-3">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+        <h2 class="mb-4 text-left">Mis Visitas</h2>
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th class="d-none">ID</th> 
+                    <th>Parque</th>
+                    <th>Rating</th>
+                    <th>Fecha de Visita</th>
+                    <th class="text-center">Acciones</th> <!-- Columna de acciones -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for mi_visita in mis_visitas %}
+                <tr>
+                    <td class="d-none">{{ mi_visita.id_visita }}</td> 
+                    <td>{{ mi_visita.parque | title }}</td>
+                    <td>{{ mi_visita.rating }}</td>
+                    <td>{{ mi_visita.fecha_visita }}</td>
+                    <td class="text-center">
+                        <!-- Ver -->
+                        <a href="{{ url_for('ver_visita', id=mi_visita.id_visita) }}" class="btn btn-info btn-sm me-2">Ver</a>
+                        <!-- Editar y Borrar solo si el usuario es el creador -->
+                        {% if usuario.id == mi_visita.id_usuario %}
+                            <a href="{{ url_for('editar_visita', id=mi_visita.id_visita) }}" class="btn btn-warning btn-sm me-2">Editar</a>
+                            <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmDeleteModal{{ mi_visita.id_visita }}">
+                                Borrar
+                            </button>
+
+                            <!-- Modal de confirmación -->
+                            <div class="modal fade" id="confirmDeleteModal{{ mi_visita.id_visita }}" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar eliminación</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            ¿Estás seguro de que deseas eliminar esta película?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                            <form action="{{ url_for('borrar_visita', id=mi_visita.id_visita) }}" method="POST" style="display:inline;">
+                                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center">Aún no registras visitas.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2 class="mt-5 text-left">Otras Visitas</h2>
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th class="d-none">ID</th> 
+                    <th>Parque</th>
+                    <th>Rating</th>
+                    <th>Fecha de Visita</th>
+                    <th>Visitante</th>
+                    <th>Acciones</th> <!-- Columna de acciones -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for visita, nombre, apellido in otras_visitas %}
+                <tr>
+                    <td class="d-none">{{ visita.id_visita }}</td> 
+                    <td>{{ visita.parque | title }}</td>
+                    <td>{{ visita.rating }}</td>
+                    <td>{{ visita.fecha_visita }}</td>
+                    <td>{{ nombre | title }} {{ apellido | title }}</td>
+                    <td>
+                        <!-- Ver -->
+                        <a href="{{ url_for('ver_visita', id=visita.id_visita) }}" class="btn btn-info btn-sm me-2">Ver</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center">No hay visitas de otros usuarios.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

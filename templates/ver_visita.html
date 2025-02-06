@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ visita.parque | title }}</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body class="bg-light">
+    <!-- Barra de navegación -->
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-6">
+            </div>
+            <div class="col-6 d-flex justify-content-end align-items-center">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-success me-2" style="margin-right:1rem;">Inicio</a> 
+                <a href="{{ url_for('cerrar_sesion') }}" class="btn btn-danger">Cerrar Sesión</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjeta de la vista -->
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>{{ visita.parque | title }}</h2>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Visitado por:</strong> {{ usuario.nombre | title }} {{ usuario.apellido | title }}</p>
+                        <p><strong>Fecha Visita:</strong> {{ visita.fecha_visita }}</p>
+                        <p><strong>Rating:</strong> {{ visita.rating }}</p>
+                        <p><strong>Detalles:</strong> {{ visita.detalles }}</p>
+                        
+                        <!-- Contador de "Me Gusta" -->
+                        <div class="mt-3">
+                            <p><strong>Me Gusta:</strong> <span id="me-gusta-count">{{ me_gusta }}</span></p>
+                        </div>
+
+                        <!-- Botón "Me Gusta" o "No Me Gusta" -->
+                        <div class="mt-3" id="boton-me-gusta">
+                            {% if ya_dio_me_gusta %}
+                                <button id="no-me-gusta-btn" class="btn btn-danger">No Me Gusta</button>
+                            {% else %}
+                                <button id="me-gusta-btn" class="btn btn-primary">Me Gusta</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para actualizar el contador de "Me Gusta"
+        function actualizarContadorMeGusta() {
+            $.ajax({
+                url: "{{ url_for('contador_me_gusta', id=visita.id_visita) }}",
+                method: "GET",
+                success: function(response) {
+                    $("#me-gusta-count").text(response.me_gusta);
+                }
+            });
+        }
+
+        // Función para actualizar el botón "Me Gusta" o "No Me Gusta"
+        function actualizarBotonMeGusta(yaDioMeGusta) {
+            if (yaDioMeGusta) {
+                $("#boton-me-gusta").html('<button id="no-me-gusta-btn" class="btn btn-danger">No Me Gusta</button>');
+            } else {
+                $("#boton-me-gusta").html('<button id="me-gusta-btn" class="btn btn-primary">Me Gusta</button>');
+            }
+        }
+
+        // Manejar el clic en el botón "Me Gusta"
+        $(document).on("click", "#me-gusta-btn", function() {
+            $.ajax({
+                url: "{{ url_for('dar_me_gusta', id=visita.id_visita) }}",
+                method: "POST",
+                success: function(response) {
+                    if (response.success) {
+                        actualizarBotonMeGusta(true); 
+                        actualizarContadorMeGusta(); 
+                    }
+                }
+            });
+        });
+
+        // Manejar el clic en el botón "No Me Gusta"
+        $(document).on("click", "#no-me-gusta-btn", function() {
+            $.ajax({
+                url: "{{ url_for('quitar_me_gusta', id=visita.id_visita) }}",
+                method: "POST",
+                success: function(response) {
+                    if (response.success) {
+                        actualizarBotonMeGusta(false); 
+                        actualizarContadorMeGusta(); 
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
