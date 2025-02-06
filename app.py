@@ -10,8 +10,8 @@ app = Flask(__name__)
 app.secret_key = '@Admin123'
 
 # Configuración de la base de datos MySQL usando la variable de entorno MYSQL_URL
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(BASE_DIR, "prueba2.db")}'
+app .config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:KkbUiHacxfrSPmQuYNVnlOOUUnufNANe@mysql.railway.internal:3306/railway"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 with app.app_context():
