@@ -6,7 +6,7 @@ from models import db, Usuario
 auth_bp = Blueprint('auth', __name__)
 
 # Ruta principal
-@app.route('/')
+@auth_bp.route('/')
 def home():
     return render_template('index.html')
 
