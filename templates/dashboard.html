@@ -20,8 +20,8 @@
             
             <!-- Columna de la derecha (Botones) -->
             <div class="col-6 d-flex justify-content-end align-items-center">
-                <a href="/nueva" class="btn btn-success me-2">Nueva Visita</a>
-                <a href="{{ url_for('cerrar_sesion') }}" class="btn btn-danger">Cerrar Sesión</a>
+                <a href="{{ url_for('visitas.crear_visita') }}" class="btn btn-success me-2">Nueva Visita</a>
+                <a href="{{ url_for('auth.cerrar_sesion') }}" class="btn btn-danger">Cerrar Sesión</a>
             </div>
         </div>
     </div>    
@@ -58,10 +58,10 @@
                     <td>{{ mi_visita.fecha_visita.strftime('%d-%m-%Y') }}</td>
                     <td class="text-center">
                         <!-- Ver -->
-                        <a href="{{ url_for('ver_visita', id=mi_visita.id_visita) }}" class="btn btn-info btn-sm me-2">Ver</a>
+                        <a href="{{ url_for('visitas.ver_visita', id=mi_visita.id_visita) }}" class="btn btn-info btn-sm me-2">Ver</a>
                         <!-- Editar y Borrar solo si el usuario es el creador -->
                         {% if usuario.id == mi_visita.id_usuario %}
-                            <a href="{{ url_for('editar_visita', id=mi_visita.id_visita) }}" class="btn btn-warning btn-sm me-2">Editar</a>
+                            <a href="{{ url_for('visitas.editar_visita', id=mi_visita.id_visita) }}" class="btn btn-warning btn-sm me-2">Editar</a>
                             <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmDeleteModal{{ mi_visita.id_visita }}">
                                 Borrar
                             </button>
@@ -81,7 +81,7 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                            <form action="{{ url_for('borrar_visita', id=mi_visita.id_visita) }}" method="POST" style="display:inline;">
+                                            <form action="{{ url_for('visitas.borrar_visita', id=mi_visita.id_visita) }}" method="POST" style="display:inline;">
                                                 <button type="submit" class="btn btn-danger">Eliminar</button>
                                             </form>
                                         </div>
@@ -93,7 +93,7 @@
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="6" class="text-center">Aún no registras visitas.</td>
+                    <td colspan="5" class="text-center">Aún no registras visitas.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -117,11 +117,11 @@
                     <td class="d-none">{{ visita.id_visita }}</td> 
                     <td>{{ visita.parque | title }}</td>
                     <td>{{ visita.rating }}</td>
-                    <td>{{ visita.fecha_visita }}</td>
+                    <td>{{ visita.fecha_visita.strftime('%d-%m-%Y') }}</td>
                     <td>{{ nombre | title }} {{ apellido | title }}</td>
                     <td>
                         <!-- Ver -->
-                        <a href="{{ url_for('ver_visita', id=visita.id_visita) }}" class="btn btn-info btn-sm me-2">Ver</a>
+                        <a href="{{ url_for('visitas.ver_visita', id=visita.id_visita) }}" class="btn btn-info btn-sm me-2">Ver</a>
                     </td>
                 </tr>
                 {% else %}
@@ -132,7 +132,6 @@
             </tbody>
         </table>
     </div>
-    
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
