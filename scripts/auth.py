@@ -15,7 +15,7 @@ def home():
 def cerrar_sesion():
     session.clear()  # Limpia todos los datos de la sesión
     flash('Has cerrado sesión exitosamente.', 'success')  # Mensaje de éxito
-    return redirect(url_for('home'))  # Redirige a la página principal o de login
+    return redirect(url_for('auth.home'))  # Redirige a la página principal o de login
 
 # Ruta para el registro de usuario
 @auth_bp.route('/register', methods=['POST'])
@@ -37,9 +37,9 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         flash('Registro exitoso, ahora puede iniciar sesión.', 'success')
-        return redirect(url_for('home'))
+        return redirect(url_for('auth.home'))
     
-    return redirect(url_for('home'))
+    return redirect(url_for('auth.home'))
 
 # Ruta para el inicio de sesión
 @auth_bp.route('/login', methods=['POST'])
@@ -51,7 +51,7 @@ def login():
     if usuario and check_password_hash(usuario.contrasena, contrasena):
         session['usuario_id'] = usuario.id
         flash('Inicio de sesión exitoso.', 'success')
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('visitas.dashboard'))
     else:
         flash('Credenciales incorrectas. Inténtelo de nuevo.', 'danger')
-        return redirect(url_for('home'))
+        return redirect(url_for('auth.home'))
