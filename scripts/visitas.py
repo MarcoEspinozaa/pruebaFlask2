@@ -9,7 +9,7 @@ visitas_bp = Blueprint('visitas', __name__)
 def dashboard():
     if 'usuario' not in session:
         flash('Por favor, inicia sesión para ver la lista de visitas.', 'warning')
-        return redirect(url_for('home'))
+        return redirect(url_for('auth.home'))
     
     id_usuario = session['usuario']['id']
     mis_visitas = Visita.query.filter_by(id_usuario=id_usuario).order_by(Visita.rating.desc()).all()
@@ -28,7 +28,7 @@ def crear_visita():
     fecha_hoy = datetime.now().strftime('%Y-%m-%d')
     if 'usuario' not in session:
         flash('Por favor, inicia sesión para crear una nueva visita.', 'warning')
-        return redirect(url_for('home'))
+        return redirect(url_for('auth.home'))
 
     if request.method == 'POST':
         parque = request.form['parque'].strip().lower()
@@ -52,7 +52,7 @@ def crear_visita():
         db.session.add(nueva_visita)
         db.session.commit()
         flash('Visita creada correctamente.', 'success')
-        return redirect(url_for('visitas.dashboard'))  # Cambia a 'visitas.dashboard'
+        return redirect(url_for('visitas.dashboard'))  
 
     return render_template('nueva_visita.html', fecha_hoy=fecha_hoy)
 
@@ -60,7 +60,7 @@ def crear_visita():
 def editar_visita(id):
     if 'usuario' not in session:  
         flash('Por favor, inicia sesión para editar una visita.', 'warning')
-        return redirect(url_for('home'))  
+        return redirect(url_for('auth.home'))  
     
     visita = Visita.query.get_or_404(id)
     if request.method == 'POST':
@@ -75,7 +75,7 @@ def editar_visita(id):
         visita.detalles = request.form['detalles']
         db.session.commit()
         flash('Visita actualizada correctamente.', 'success')
-        return redirect(url_for('visitas.dashboard'))  # Cambia a 'visitas.dashboard'
+        return redirect(url_for('visitas.dashboard'))  
     
     return render_template('nueva_visita.html', visita=visita, editar=True)
 
@@ -85,13 +85,13 @@ def borrar_visita(id):
     db.session.delete(visita)
     db.session.commit()
     flash('Visita borrada correctamente.', 'success')
-    return redirect(url_for('visitas.dashboard'))  # Cambia a 'visitas.dashboard'
+    return redirect(url_for('visitas.dashboard'))  
 
 @visitas_bp.route('/ver/<int:id>', methods=['GET'])
 def ver_visita(id):
     if 'usuario' not in session:
         flash('Por favor, inicia sesión para ver los detalles de la visita.', 'warning')
-        return redirect(url_for('home'))
+        return redirect(url_for('auth.home'))
     
     visita = Visita.query.get_or_404(id)
     return render_template('ver_visita.html', visita=visita)

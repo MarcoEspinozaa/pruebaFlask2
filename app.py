@@ -27,10 +27,6 @@ app.register_blueprint(auth_bp)  # Registra el Blueprint de autenticación
 app.register_blueprint(visitas_bp)  # Registra el Blueprint de visitas
 app.register_blueprint(me_gusta_bp)  # Registra el Blueprint de me gusta
 
-# Ruta principal
-@app.route('/')
-def home():
-    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

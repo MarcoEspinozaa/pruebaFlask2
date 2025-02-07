@@ -1,9 +1,14 @@
-from flask import Blueprint, request, session, redirect, url_for, flash
+from flask import Blueprint, request, session, redirect, url_for, flash, render_template
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, Usuario
 
 # Crear Blueprint para autenticación
 auth_bp = Blueprint('auth', __name__)
+
+# Ruta principal
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 # Ruta para cerrar sesión
 @auth_bp.route('/cerrar_sesion')
